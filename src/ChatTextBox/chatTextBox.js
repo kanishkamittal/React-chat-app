@@ -32,7 +32,7 @@ class ChatTextBoxComponent extends React.Component {
   }
   userTyping = (e) => e.keyCode === 13 ? this.submitMessage() : this.setState({ chatText: e.target.value });
   messageValid = (txt) => txt && txt.replace(/\s/g, '').length;
-  userClickedInput = () => console.log('clicked input')
+  userClickedInput = () => this.props.messageReadFn();
   submitMessage = () => {
     if(this.messageValid(this.state.chatText)) {
       this.props.submitMessageFn(this.state.chatText);
