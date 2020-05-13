@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 class ChatViewComponent extends React.Component {
 
+  
   componentDidUpdate = () => {
     const container = document.getElementById('chatview-container');
     if(container)

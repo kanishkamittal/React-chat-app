@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import NewChatComponent from '../newchat/newChat';
 import ChatListComponent from '../chatList/ChatList';
 import ChatViewComponent from '../chatview/chatView';
 import ChatTextBoxComponent from '../ChatTextBox/chatTextBox';
@@ -44,6 +45,10 @@ export class Dashboard extends Component {
           <ChatTextBoxComponent submitMessageFn={this.submitMessage} messageReadFn={this.messageRead}></ChatTextBoxComponent> 
           : null 
         }
+
+        {
+          this.state.newChatFormVisible ? <NewChatComponent goToChatFn={this.goToChat} newChatSubmitFn={this.newChatSubmit}></NewChatComponent> : null
+        }
       
       <Button onClick={this.signOut} className={classes.signOutBtn}>Sign Out</Button>
         
@@ -54,8 +59,35 @@ export class Dashboard extends Component {
   signOut = () => firebase.auth().signOut();
 
   selectChat = async (chatIndex) => {
-    await this.setState({ selectedChat: chatIndex });
+    await this.setState({ selectedChat: chatIndex, newChatFormVisible: false});
     this.messageRead();
+  }
+
+  goToChat = async (docKey, msg) => {
+    const usersInChat = docKey.split(':');
+    const chat = this.state.chats.find(_chat => usersInChat.every(_user => _chat.users.includes(_user)));
+    this.setState({ newChatFormVisible: false });
+    await this.selectChat(this.state.chats.indexOf(chat));
+    this.submitMessage(msg);
+  }
+
+  newChatSubmit = async (chatObj) => {
+    const docKey = this.buildDocKey(chatObj.sendTo);
+    await 
+      firebase
+        .firestore()
+        .collection('chats')
+        .doc(docKey)
+        .set({
+          messages: [{
+            message: chatObj.message,
+            sender: this.state.email
+          }],
+          users: [this.state.email, chatObj.sendTo],
+          receiverHasRead: false
+        })
+    this.setState({ newChatFormVisible: false });
+    this.selectChat(this.state.chats.length - 1);
   }
 
   submitMessage = (msg) => {
