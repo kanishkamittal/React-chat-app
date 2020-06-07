@@ -6,6 +6,7 @@ import {Route, BrowserRouter as Router} from 'react-router-dom';
 import LoginComponent from './login/login'
 import SignupComponent from './signup/signup'
 import Dashboard from './dashboard/dashboard'
+import ProfileComponent from './Profile/profile'
 
 const firebase = require('firebase')
 require('firebase/firestore')
@@ -21,6 +22,7 @@ firebase.initializeApp({
     measurementId: "G-HC8BSBTSYR"
 
 })
+const storage=firebase.storage()
 
 const routing = (
   <Router>
@@ -28,6 +30,7 @@ const routing = (
       <Route path="/login" component={LoginComponent}></Route>
       <Route path="/signup" component={SignupComponent}></Route>
       <Route path="/dashboard" component={Dashboard}></Route>
+      <Route path='/profile' component={ProfileComponent}></Route>
     </div>
   </Router>
 )
@@ -38,3 +41,6 @@ ReactDOM.render(routing,document.getElementById('root'));
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+export {
+  storage
+}
